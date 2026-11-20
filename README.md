@@ -11,17 +11,6 @@
 3. **Como os clientes pagam, e quanto vale cada forma?**
    Ajuda a negociar com bancos e financeiras e a planejar o fluxo de caixa. Resposta: Wire Transfer responde por 31% da receita.
 
-## Prompt
-
-O prompt completo que gerou a dashboard está em [`PROMPT.md`](PROMPT.md). Ele pedia uma dashboard em um único `index.html`, com visual inspirado na Porsche, filtros por modelo, cidade, estado, ano da venda e pagamento, e KPIs calculados dinamicamente.
-
-O que mudou até a versão final:
-
-- O filtro de ano ganhou a opção "Data inválida", para manter os 100 registros sem inventar datas.
-- Os gráficos passaram a agrupar por família do modelo (911, Taycan, Cayenne etc.), porque 40 modelos em 100 vendas deixavam o gráfico fragmentado.
-- O gráfico de estados ficou limitado aos 8 maiores, com a soma dos demais.
-- Os gráficos foram feitos com HTML, CSS e JavaScript puro, sem Chart.js, para a página funcionar mesmo offline.
-- Os KPIs de valor passaram a aparecer resumidos (ex.: US$ 12,83 mi), com o valor exato embaixo, para caber no celular.
 
 ## Tratamento da base
 
@@ -33,8 +22,85 @@ O que mudou até a versão final:
 
 ## Ferramenta de IA
 
-Usei um agente de IA (Claude) com acesso aos arquivos do projeto, que analisou a planilha, gerou o código e testou a dashboard no navegador. Não usei o ChatGPT com Canvas.
+Utilizei o Claude como ferramenta de inteligência artificial para auxiliar na análise dos dados e no desenvolvimento da dashboard.
+
+O prompt inicial solicitou a criação de uma dashboard interativa em HTML, CSS e JavaScript, com identidade visual inspirada na Porsche, indicadores de vendas, gráficos e filtros interativos.
+
+Durante o desenvolvimento, foram realizados ajustes nas instruções para melhorar o visual, corrigir funcionalidades, aprimorar os filtros e validar os cálculos apresentados.
+
+A IA foi utilizada como ferramenta de apoio durante o desenvolvimento, enquanto as escolhas e validações do projeto foram acompanhadas ao longo do processo.
+
+Ferramenta utilizada: Claude.
 
 ## Dashboard publicada
 
-_[cole aqui o link do GitHub Pages]_
+🔗 **Dashboard publicada:** _[cole aqui o link do GitHub Pages]_
+
+(Final do solicitado pela DIO.)
+
+
+== Anotações extras. ==
+
+## Objetivo
+
+Permitir que uma diretoria comercial veja, em poucos segundos, **de onde vem a receita**: quais modelos vendem mais valor, em quais estados e por quais formas de pagamento, com a possibilidade de cruzar esses recortes usando filtros.
+
+## Indicadores (KPIs)
+
+Todos são recalculados a cada mudança de filtro:
+
+- Total de vendas
+- Receita total
+- Ticket médio
+- Quantidade de modelos distintos
+- Modelo com maior receita
+
+## Filtros
+
+Modelo, Cidade, Estado, Ano da venda e Forma de pagamento. Os filtros podem ser combinados, cada filtro ativo aparece como uma etiqueta removível, e há um botão para limpar todos. O botão **Exportar CSV** baixa as vendas do recorte atual.
+
+## Tratamento dos dados
+
+A planilha original tem 21 colunas: quase todo campo aparece em versão crua e versão sanitizada.
+
+- **Só colunas sanitizadas** foram usadas (data, modelo, ano, preço, quilometragem, pagamento, cidade, estado, status).
+- **Preço, ano e quilometragem** foram convertidos de texto para número.
+- **Cliente e vendedor** ficaram de fora, porque não têm versão sanitizada.
+- **Validação:** 100 registros, nenhum valor vazio, nenhum ID ou linha duplicada, nenhuma cidade associada a dois estados.
+- **24 datas inválidas** (ex.: `2024-02-30`, `April 31st, 2024`) estão marcadas como `INVALID` na própria planilha. Os 100 registros foram mantidos; no filtro de ano, essas vendas aparecem como **"Data inválida"**, sem inventar um ano.
+- **18 vendas têm data posterior a novembro de 2026** (até outubro de 2027). Como é uma base fictícia de desafio, os registros foram mantidos.
+- **Família do modelo:** coluna derivada da primeira palavra do modelo (ex.: "911 Turbo S" → 911), criada porque 40 modelos diferentes em 100 vendas deixariam o gráfico fragmentado.
+
+## Tecnologias
+
+- HTML5, CSS3 e JavaScript puro (sem bibliotecas)
+- Gráficos de barras feitos com HTML e CSS, com animação por `transition`
+- Layout responsivo com CSS Grid e media queries
+- Tudo em um único arquivo `index.html`, com os dados incorporados: funciona sem servidor e sem internet
+
+## Testes realizados
+
+Executados em navegador automatizado (Chrome), com os resultados comparados a cálculos independentes feitos em Python sobre a planilha:
+
+- Receita total (US$ 12.827.800,50), ticket médio (US$ 128.278,01), 40 modelos e modelo líder (911 Dakar) conferidos
+- Cada filtro individualmente e combinações de 2 e 3 filtros
+- Remoção de filtro pela etiqueta e botão Limpar filtros
+- Mensagem de aviso quando a combinação não tem vendas
+- Exportação de CSV com o número correto de linhas
+- Sem rolagem horizontal em tablet (820 px) e celular (390 px)
+- Nenhum erro no console
+
+## Como executar localmente
+
+1. Baixe ou clone este repositório.
+2. Dê dois cliques no `index.html`. Ele abre no navegador.
+
+
+## Capturas de tela
+
+| Computador | Celular |
+|---|---|
+| ![Computador](screenshots/desktop.png) | ![Celular](screenshots/celular.png) |
+
+---
+Desenvolvido por Matheus Candido.
